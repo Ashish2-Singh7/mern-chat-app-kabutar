@@ -7,13 +7,13 @@ export const signUpUser = async (req, res) => {
         const { fullName, username, password, confirmPassword, gender } = req.body;
 
         if (password != confirmPassword) {
-            return res.status(400).json({ message: "Passwords don't match" });
+            return res.status(400).json({ error: "Passwords don't match" });
         }
 
         const isUserExists = await User.findOne({ username });
 
         if (isUserExists) {
-            return res.status(400).json({ message: "Username already exists" });
+            return res.status(400).json({ error: "Username already exists" });
         }
 
         // HASH THE PASSWORD 
@@ -45,11 +45,11 @@ export const signUpUser = async (req, res) => {
             })
         }
         else {
-            return res.status(400).json({ message: "Invalid user data" });
+            return res.status(400).json({ error: "Invalid user data" });
         }
     } catch (error) {
         console.log("Error in sign-up controller", error.message);
-        return res.status(500).json({ message: "INTERNAL SERVER ERROR" });
+        return res.status(500).json({ error: "INTERNAL SERVER ERROR" });
     }
 }
 
@@ -60,7 +60,7 @@ export const login = async (req, res) => {
         const isPasswordCorrect = await bcrypt.compare(password, user?.password || ""); // if user not present user?.password evaluates to undefined to avoid the error we use || "" this.
 
         if (!isPasswordCorrect || !user) {
-            return res.status(400).json({ message: "Invalid credentials" });
+            return res.status(400).json({ error: "Invalid credentials" });
         }
 
         generateTokenAndSetCookies(user._id, res);
@@ -73,7 +73,7 @@ export const login = async (req, res) => {
         })
     } catch (error) {
         console.log("Error in login controller", error.message);
-        return res.status(500).json({ message: "INTERNAL SERVER ERROR" });
+        return res.status(500).json({ error: "INTERNAL SERVER ERROR" });
     }
 }
 
@@ -84,6 +84,6 @@ export const logout = (req, res) => {
     }
     catch (error) {
         console.log("Error in logout controller", error.message);
-        return res.status(500).json({ message: "INTERNAL SERVER ERROR" });
+        return res.status(500).json({ error: "INTERNAL SERVER ERROR" });
     }
 }

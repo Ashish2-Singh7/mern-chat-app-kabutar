@@ -8,7 +8,7 @@ const GenderCheckBox = ({ handleCheckBoxChange, selectedValue }) => {
                     <span className='label-text'>Male</span>
                     <input
                         type='checkbox'
-                        className='checkbox border-slate-900'
+                        className='checkbox border-white'
                         checked={selectedValue === "male"}
                         onChange={() => { handleCheckBoxChange("male") }}
                     />
@@ -19,7 +19,7 @@ const GenderCheckBox = ({ handleCheckBoxChange, selectedValue }) => {
                     <span className='label-text'>Female</span>
                     <input
                         type='checkbox'
-                        className='checkbox border-slate-900'
+                        className='checkbox border-white'
                         checked={selectedValue === "female"}
                         onChange={() => { handleCheckBoxChange("female") }}
                     />

@@ -6,15 +6,18 @@ import './index.css';
 import App from './App.jsx';
 import { AuthContextProvider } from '../context/AuthContext.jsx';
 import { SocketContextProvider } from '../context/SocketConext.jsx';
+import { SettingsContextProvider } from '../context/SettingContext.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <AuthContextProvider>
         <SocketContextProvider>
-          <App />
+          <SettingsContextProvider>
+            <App />
+          </SettingsContextProvider>
         </SocketContextProvider>
       </AuthContextProvider>
     </BrowserRouter>
-  </StrictMode>,
+  </StrictMode >
 )

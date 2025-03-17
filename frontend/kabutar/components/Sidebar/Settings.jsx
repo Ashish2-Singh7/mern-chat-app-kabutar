@@ -7,13 +7,15 @@ import { IoMdClose } from "react-icons/io";
 import { useSettingsContext } from '../../context/SettingContext';
 
 import GenderCheckBox from '../../Pages/SignUp/GenderCheckBox';
+import { useAuthContext } from '../../context/AuthContext';
 
 const Settings = () => {
+    const { authUser } = useAuthContext();
     const [inputs, setInputs] = useState({ username: "", currentPassword: "", newPassword: "", fullName: "", gender: "" });
     const loading = false;
     const { setShowSettings } = useSettingsContext();
     const profileImgRef = useRef();
-    const [profileImg, setProfileImg] = useState(null);
+    const [profileImg, setProfileImg] = useState(authUser.profilePic);
 
     const handleSubmit = () => {
 

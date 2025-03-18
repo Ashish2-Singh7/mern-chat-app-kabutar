@@ -20,7 +20,7 @@ cloudinary.config({
 const PORT = process.env.PORT || 5000;
 // const __dirname = path.resolve();
 
-app.use(express.json()); // to parse the incoming requests with JSON payloads (from req.body);
+app.use(express.json({limit: "5mb"})); // to parse the incoming requests with JSON payloads (from req.body);
 app.use(cookieParser()); // to parse the incoming cookies from req.cookies;
 app.use('/api/auth', authRoutes);
 app.use('/api/messages', messageRoutes);

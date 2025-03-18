@@ -1,5 +1,5 @@
 
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { MdEdit } from "react-icons/md";
 import { IoMdClose } from "react-icons/io";
@@ -9,16 +9,20 @@ import { useSettingsContext } from '../../context/SettingContext';
 import GenderCheckBox from '../../Pages/SignUp/GenderCheckBox';
 import { useAuthContext } from '../../context/AuthContext';
 
+import updateUserProfile from '../../hooks/useUpdateProfile';
+
 const Settings = () => {
     const { authUser } = useAuthContext();
     const [inputs, setInputs] = useState({ username: "", currentPassword: "", newPassword: "", fullName: "", gender: "" });
-    const loading = false;
     const { setShowSettings } = useSettingsContext();
     const profileImgRef = useRef();
-    const [profileImg, setProfileImg] = useState(authUser.profilePic);
+    const [profileImg, setProfileImg] = useState(null);
+    const { loading, updateProfile } = updateUserProfile();
 
-    const handleSubmit = () => {
-
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        await updateProfile({ ...inputs, profilePic: profileImg });
+        setProfileImg(null);
     }
 
     const onInputChangeHandler = (e) => {
@@ -40,6 +44,19 @@ const Settings = () => {
         }
     };
 
+    useEffect(() => {
+        if (authUser) {
+            setInputs({
+                username: authUser.username,
+                fullName: authUser.fullName,
+                currentPassword: "",
+                newPassword: "",
+                gender: authUser.gender
+            });
+
+        }
+    }, [authUser]);
+
     return (
         <div
             className='w-[256.8px] bg-gray-900 p-3 border-r border-slate-500'
@@ -57,7 +74,7 @@ const Settings = () => {
                     {/* USER AVATAR */}
                     <div className='avatar'>
                         <div className='w-20 rounded-full relative group/avatar'>
-                            <img src={!profileImg ? "/avatar-placeholder.png" : profileImg} />
+                            <img src={profileImg || authUser.profilePic || './avatar-placeholder.png'} />
                             <div className='absolute bottom-5 right-0 p-1 bg-primary rounded-full group-hover/avatar:opacity-100 opacity-0 cursor-pointer'>
                                 <MdEdit
                                     className='w-4 h-4 text-white'

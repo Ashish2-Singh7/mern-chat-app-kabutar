@@ -15,9 +15,10 @@ export const getUsersForSidebar = async (req, res) => {
 
 export const updateUserProfile = async (req, res) => {
     try {
-        const { username, fullName, currentPassword, newPassword, gender, profileImage } = req.body;
+        const { username, fullName, currentPassword, newPassword, gender } = req.body;
+        let { profileImage } = req.body;
         const loggedInUserId = req.user._id;
-        const loggedUser = await User.findById(loggedInUserId);
+        let loggedUser = await User.findById(loggedInUserId);
         if (!loggedUser) return res.status(404).json({ error: "User not found" });
         if ((!currentPassword && newPassword) || (!newPassword && currentPassword)) {
             return res.status(400).json({ error: "Please provide both the current password and the new password" });
@@ -31,16 +32,21 @@ export const updateUserProfile = async (req, res) => {
             const hashPassword = await bcrypt.hash(newPassword, salt);
             loggedUser.password = hashPassword;
         }
-
-        profileImage = uploadProfileImage(profileImage, loggedUser);
+        if (profileImage) {
+            profileImage = await uploadProfileImage(profileImage, loggedUser);
+        }
 
         loggedUser.fullName = fullName || loggedUser.fullName;
         loggedUser.username = username || loggedUser.username;
         loggedUser.gender = gender || loggedUser.coverImg;
-        loggedUser.profilePic = profileImage;
+        loggedUser.profilePic = profileImage || loggedUser.profilePic;
 
-
-        loggedUser = await loggedUser.save();
+        try {
+            loggedUser = await loggedUser.save();
+        } catch (error) {
+            console.log(error)
+            throw error;
+        }
 
         loggedUser.password = null;
 

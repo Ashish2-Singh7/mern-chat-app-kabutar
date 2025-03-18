@@ -35,14 +35,12 @@ export const signUpUser = async (req, res) => {
             generateTokenAndSetCookies(newUser._id, res);
             newUser.save();
             return res.status(201).json({
-                message: 'user created',
-                user: {
-                    _id: newUser._id,
-                    fullName: newUser.fullName,
-                    username: newUser.username,
-                    profilePic: newUser.profilePic,
-                }
-            })
+                _id: newUser._id,
+                fullName: newUser.fullName,
+                username: newUser.username,
+                profilePic: newUser.profilePic,
+                gender: newUser.gender
+            });
         }
         else {
             return res.status(400).json({ error: "Invalid user data" });
@@ -70,6 +68,7 @@ export const login = async (req, res) => {
             fullName: user.fullName,
             username: user.username,
             profilePic: user.profilePic,
+            gender: user.gender,
         })
     } catch (error) {
         console.log("Error in login controller", error.message);

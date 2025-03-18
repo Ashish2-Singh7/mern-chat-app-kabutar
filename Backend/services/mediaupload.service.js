@@ -24,3 +24,32 @@ export const uploadProfileImage = async (profileImage, user) => {
     }
     return profileImage;
 }
+
+export const uploadConversationBgImage = async (conversationBgImage, conversation) => {
+    if (conversationBgImage) {
+        if (conversation.backgroundImage) {
+            if (checkImageExists(conversation.backgroundImage.split("/").pop().split(".")[0])) {
+                await cloudinary.uploader.destroy(conversation.backgroundImage.split("/").pop().split(".")[0]);
+            }
+        }
+        const uploadedResponse = await cloudinary.uploader.upload(conversationBgImage);
+        conversationBgImage = uploadedResponse.secure_url;
+    }
+    return conversationBgImage;
+}
+
+export const sendImageMessage = async (imageToSend) => {
+
+    const uploadedResponse = await cloudinary.uploader.upload(imageToSend);
+    imageToSend = uploadedResponse.secure_url;
+
+    return imageToSend;
+}
+
+export const sendVideoMessage = async (VideoToSend) => {
+
+    const uploadedResponse = await cloudinary.uploader.upload(VideoToSend);
+    VideoToSend = uploadedResponse.secure_url;
+
+    return VideoToSend;
+}

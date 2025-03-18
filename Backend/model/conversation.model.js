@@ -13,7 +13,11 @@ const conversationSchema = new mongoose.Schema({
             ref: 'Message',
             default: []
         }
-    ]
+    ],
+    backgroundImage:{
+        type: String,
+        default: null
+    }
     // createdAt and updatedAt
 }, { timestamps: true });
 

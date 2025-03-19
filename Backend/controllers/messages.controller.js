@@ -1,6 +1,6 @@
 import Conversation from '../model/conversation.model.js';
 import Message from '../model/message.model.js';
-import { sendImageMessage, sendVideoMessage } from '../services/mediaupload.service.js';
+import { sendImageMessage, sendVideoMessage, uploadConversationBgImage } from '../services/mediaupload.service.js';
 import { getRecieverSocketId, io } from '../socket/socket.js';
 
 export const sendMessage = async (req, res) => {
@@ -98,11 +98,31 @@ export const getMessages = async (req, res) => {
     }
 }
 
+export const getConversation = async (req, res) => {
+    try {
+        const { id: userToChatID } = req.params;
+        const senderId = req.user._id;
+
+        const conversation = await Conversation.findOne({
+            participants: { $all: [senderId, userToChatID] }
+        });
+
+        if (!conversation) return res.status(200).json([]);
+
+        return res.status(200).json(conversation);
+
+
+    } catch (error) {
+        console.log("Error in getConversation controller ", error.message);
+        return res.status(500).json({ error: "INTERNAL SERVER ERROR" });
+    }
+}
+
 export const updateConversation = async (req, res) => {
     try {
         const { id: receiverId } = req.params; // renaming id with reciever id
         const senderId = req.user._id;
-        const { bgImage } = req.body;
+        let { bgImage } = req.body;
 
         let conversation = await Conversation.findOne({
             participants: { $all: [senderId, receiverId] },
@@ -113,14 +133,16 @@ export const updateConversation = async (req, res) => {
                 conversation = await Conversation.create({
                     participants: [senderId, receiverId],
                 });
-                bgImage = uploadConversationBgImage(bgImage, conversation);
+                bgImage = await uploadConversationBgImage(bgImage, conversation);
                 conversation.backgroundImage = bgImage;
             }
             else {
-                bgImage = uploadConversationBgImage(bgImage, conversation);
+                bgImage = await uploadConversationBgImage(bgImage, conversation);
                 conversation.backgroundImage = bgImage;
             }
             await conversation.save();
+
+            return res.status(200).json(conversation);
         }
         else {
             return res.status(200).json({ message: "Nothing to update" });

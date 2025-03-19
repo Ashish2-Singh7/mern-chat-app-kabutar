@@ -2,30 +2,38 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import Messages from './Messages';
 import MessageInput from './MessageInput';
+import ImageInputContainer from './ImageInputContainer';
+import VideoInputContainer from './VideoInputContainer';
 
 import { TiMessages } from 'react-icons/ti';
 import { FaPlus } from "react-icons/fa";
 
 import useConversation from '../../zustand/useConversation';
-import { useAuthContext } from '../../context/AuthContext';
-import ImageInputContainer from './ImageInputContainer';
 import useSelectedImage from '../../zustand/useSelectedImage';
-import VideoInputContainer from './VideoInputContainer';
+
+import { useAuthContext } from '../../context/AuthContext';
+
+import useUpdateConversation from '../../hooks/useUpdateConversation';
+import useGetConversation from '../../hooks/useGetConversation';
 
 const MessageContainer = () => {
-    const { selectedConversation, setSelectedConversation } = useConversation();
+    const { selectedConversation, setSelectedConversation, setConversation } = useConversation();
     const { ImageToSend, setImageToSend, chatBgImage, setChatBgImage } = useSelectedImage();
     const chatBgImageRef = useRef();
     const [VideoToSend, setVideoToSend] = useState(null);
 
+    const { loading, updateConversation } = useUpdateConversation();
+
+    const { conversation, loading: conversationLoading, setForceRender } = useGetConversation();
 
     // RUNS ON COMPONENT DISMOUNTING TO RESET THE SELECTEDCONVERSATION STATE
     useEffect(() => {
         // cleanup function (unmounts)
         return () => {
             setSelectedConversation(null);
+            setConversation(null);
         };
-    }, [setSelectedConversation]);
+    }, [setSelectedConversation, setConversation]);
 
     const handleImgChange = (e) => {
         const file = e.target.files[0];
@@ -33,10 +41,17 @@ const MessageContainer = () => {
             const reader = new FileReader();
             reader.onload = () => {
                 setChatBgImage(reader.result);
+                uploadBGimage(reader.result);
             };
             reader.readAsDataURL(file);
         }
     };
+
+    const uploadBGimage = async (img) => {
+        await updateConversation(img);
+        setChatBgImage(null);
+        setForceRender(prevState => prevState + 1);
+    }
 
     return (
         <div className='md:min-w-[450px] flex flex-col'>
@@ -45,9 +60,9 @@ const MessageContainer = () => {
             ) : (
                 <div className='h-full flex flex-col'>
                     <img
-                        src={!chatBgImage ? "/chatBgImage.jpg" : chatBgImage}
+                        src={chatBgImage || (conversationLoading ? "./loadingGif.gif" : conversation?.backgroundImage) || './chatBgImage.jpg'}
                         alt=""
-                        className='object-cover w-[450px] h-full absolute z-[-1] opacity-30'
+                        className={`${conversationLoading ? "object-contain" : "object-cover"} w-[450px] h-full absolute z-[-1] opacity-30`}
                     />
                     <input
                         type='file'
@@ -61,12 +76,16 @@ const MessageContainer = () => {
                         <div><span className='label-text'>To: </span><span className='text-gray-900 font-bold'>{selectedConversation.fullName}</span></div>
                         <div>
                             <button className="btn" popoverTarget="popover-1" style={{ anchorName: "--anchor-1" } /* as React.CSSProperties */}>
-                                <FaPlus className='text-xs' />
+                                {loading ? <span className='loading loading-spinner'></span> : <FaPlus className='text-xs' />}
                             </button>
 
                             <ul className="dropdown menu w-52 rounded-box bg-base-100 shadow-sm"
                                 popover="auto" id="popover-1" style={{ positionAnchor: "--anchor-1" } /* as React.CSSProperties */}>
-                                <li><a onClick={() => { chatBgImageRef.current.click() }}>Add background Image</a></li>
+                                <li><a
+                                    onClick={() => {
+                                        chatBgImageRef.current.click();
+                                    }}>
+                                    Add background Image</a></li>
                             </ul>
                         </div>
                     </div>

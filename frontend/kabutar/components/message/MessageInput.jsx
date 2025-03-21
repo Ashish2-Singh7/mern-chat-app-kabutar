@@ -6,7 +6,7 @@ import { FaVideo } from "react-icons/fa";
 
 import useSendMessage from '../../hooks/useSendMessage';
 
-const MessageInput = ({ setImageToSend, setVideoToSend }) => {
+const MessageInput = ({ setImageToSend, setVideoToSend, selectedImage, selectedVideo }) => {
     const [message, setMessage] = useState("");
     const { loading, sendMessage } = useSendMessage();
     const [isDropDownVis, setIsDropDownVis] = useState(false);
@@ -16,9 +16,11 @@ const MessageInput = ({ setImageToSend, setVideoToSend }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!message) return;
-        await sendMessage(message);
+        if (!message && !selectedImage && !selectedVideo) return;
+        await sendMessage(message, selectedImage, selectedVideo);
         setMessage("");
+        setImageToSend("");
+        setVideoToSend("");
     }
 
     const handleImgToSendChange = (e) => {
@@ -58,7 +60,7 @@ const MessageInput = ({ setImageToSend, setVideoToSend }) => {
                     <button type='submit' className='cursor-pointer'>
                         {loading ? <div className='loading loading-spinner'></div> : <BsSend />}
                     </button>
-                    <button className='cursor-pointer' onClick={() => { setIsDropDownVis(!isDropDownVis) }}>
+                    <button className='cursor-pointer' type='button' onClick={() => { setIsDropDownVis(!isDropDownVis); }}>
                         {loading ? <div className='loading loading-spinner'></div> : <FaPlus />}
                     </button>
                 </div>

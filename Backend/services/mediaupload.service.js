@@ -25,6 +25,7 @@ export const uploadProfileImage = async (profileImage, user) => {
         }
         return profileImage;
     } catch (error) {
+        console.log("Error in uploadProfileImage service", error.message);
         return null;
     }
 }
@@ -42,22 +43,35 @@ export const uploadConversationBgImage = async (conversationBgImage, conversatio
         }
         return conversationBgImage;
     } catch (error) {
+        console.log("Error in uploadConversationBgImage service", error.message);
         return null;
     }
 }
 
 export const sendImageMessage = async (imageToSend) => {
+    try {
+        const uploadedResponse = await cloudinary.uploader.upload(imageToSend);
+        imageToSend = uploadedResponse.secure_url;
 
-    const uploadedResponse = await cloudinary.uploader.upload(imageToSend);
-    imageToSend = uploadedResponse.secure_url;
-
-    return imageToSend;
+        return imageToSend;
+    }
+    catch (error) {
+        console.log("Error in sendImageMessage service", error.message);
+        return null;
+    }
 }
 
 export const sendVideoMessage = async (VideoToSend) => {
+    try {
+        const uploadedResponse = await cloudinary.uploader.upload(VideoToSend, {
+            resource_type: "video"
+        });
+        VideoToSend = uploadedResponse.secure_url;
 
-    const uploadedResponse = await cloudinary.uploader.upload(VideoToSend);
-    VideoToSend = uploadedResponse.secure_url;
+        return VideoToSend;
 
-    return VideoToSend;
+    } catch (error) {
+        console.log("Error in sendVideoMessage service", error.message);
+        return null;
+    }
 }

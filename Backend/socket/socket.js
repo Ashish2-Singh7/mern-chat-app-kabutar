@@ -16,11 +16,15 @@ const io = new Server(server, {
 export const getRecieverSocketId = (recieverId) => {
     return userSocketMap[recieverId];
 }
+export const getSocketInstance = (userId) => {
+    const socketId = userSocketMap[userId];
+    return socketId ? io.sockets.sockets.get(socketId) : null;
+};
 
 const userSocketMap = {}; // {userId: socketId};
 
 io.on("connection", (socket) => {
-    console.log("a user connected", socket.id);
+    // console.log("a user connected", socket.id);
 
     const userId = socket.handshake.query.userId;
     if (userId != 'undefined') userSocketMap[userId] = socket.id;
@@ -29,8 +33,10 @@ io.on("connection", (socket) => {
     io.emit("getOnlineUsers", Object.keys(userSocketMap)); // we will be using this event name getOnlineUsers in the client to get the online users
 
     // socket.on() is used to listen to the events. Can be used both on client and server side.
+    socket.broadcast.emit('newUserJoined');
+
     socket.on("disconnect", () => {
-        console.log("a user disconnected", socket.id);
+        // console.log("a user disconnected", socket.id);
         delete userSocketMap[userId];
         io.emit("getOnlineUsers", Object.keys(userSocketMap));
     });

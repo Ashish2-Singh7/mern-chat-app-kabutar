@@ -1,6 +1,7 @@
 import User from "../model/user.model.js";
 import bcrypt from "bcryptjs";
 import { uploadProfileImage } from "../services/mediaupload.service.js";
+import { getSocketInstance, io } from "../socket/socket.js";
 
 export const getUsersForSidebar = async (req, res) => {
     try {
@@ -49,6 +50,10 @@ export const updateUserProfile = async (req, res) => {
         }
 
         loggedUser.password = null;
+        const userSocketInstance = getSocketInstance(loggedInUserId);
+        if (userSocketInstance) {
+            userSocketInstance.broadcast.emit("profileUpdated", loggedUser);
+        }
 
         return res.status(200).json(loggedUser);
 

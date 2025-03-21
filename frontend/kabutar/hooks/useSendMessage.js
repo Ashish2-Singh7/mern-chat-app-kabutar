@@ -6,7 +6,7 @@ const useSendMessage = () => {
     const [loading, setLoading] = useState(false);
     const { messages, setMessages, selectedConversation } = useConversation();
 
-    const sendMessage = async (message) => {
+    const sendMessage = async (message, imageMessage, videoMessage) => {
         setLoading(true);
         try {
             const res = await fetch(`/api/messages/send/${selectedConversation._id}`, {
@@ -14,7 +14,7 @@ const useSendMessage = () => {
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ message })
+                body: JSON.stringify({ message, imageMessage, videoMessage })
             });
             const data = await res.json();
 
@@ -22,8 +22,8 @@ const useSendMessage = () => {
 
             setMessages([...messages, data]);
 
-        } catch (error) {
-            toast.error(error.message);
+        } catch {
+            toast.error("Something went wrong!. Maybe the file size is exceeding the limit of 4mb");
         } finally {
             setLoading(false);
         }

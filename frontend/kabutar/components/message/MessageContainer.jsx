@@ -26,6 +26,7 @@ const MessageContainer = () => {
 
     const { conversation, loading: conversationLoading, setForceRender } = useGetConversation();
 
+
     // RUNS ON COMPONENT DISMOUNTING TO RESET THE SELECTEDCONVERSATION STATE
     useEffect(() => {
         // cleanup function (unmounts)
@@ -89,11 +90,11 @@ const MessageContainer = () => {
                             </ul>
                         </div>
                     </div>
-                    <div className='flex flex-col h-full'>
+                    <div className='flex flex-col h-full overflow-y-auto'>
                         <Messages />
-                        {ImageToSend && <ImageInputContainer selectedImage={ImageToSend} />}
-                        {VideoToSend && <VideoInputContainer selectedVideo={VideoToSend} />}
-                        <MessageInput setImageToSend={setImageToSend} setVideoToSend={setVideoToSend} />
+                        {ImageToSend && <ImageInputContainer selectedImage={ImageToSend} setImageToSend={setImageToSend} />}
+                        {VideoToSend && <VideoInputContainer selectedVideo={VideoToSend} setVideoToSend={setVideoToSend} />}
+                        <MessageInput setImageToSend={setImageToSend} selectedImage={ImageToSend} selectedVideo={VideoToSend} setVideoToSend={setVideoToSend} />
                     </div>
                 </div>
             )}

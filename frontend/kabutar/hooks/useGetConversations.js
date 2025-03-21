@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 const useGetConversations = () => {
     const [loading, setLoading] = useState(false);
     const [conversations, setConversations] = useState([]);
+    const [reFetch, setRefetch] = useState(0);
     useEffect(() => {
         const getConversation = async () => {
             setLoading(true);
@@ -21,9 +22,9 @@ const useGetConversations = () => {
             }
         }
         getConversation();
-    }, []);
+    }, [reFetch]);
 
-    return { loading, conversations };
+    return { loading, conversations, setRefetch };
 }
 
 

@@ -5,7 +5,8 @@ import { getRecieverSocketId, io } from '../socket/socket.js';
 
 export const sendMessage = async (req, res) => {
     try {
-        const { message, imageMessage, videoMessage } = req.body;
+        const { message } = req.body;
+        let { imageMessage, videoMessage } = req.body;
         const { id: receiverId } = req.params; // renaming id with reciever id
         const senderId = req.user._id;
 
@@ -28,14 +29,14 @@ export const sendMessage = async (req, res) => {
                 newMessage.message = message;
             }
             if (imageMessage) {
-                imageMessage = sendImageMessage();
+                imageMessage = await sendImageMessage(imageMessage);
                 newMessage.media = {
                     mediaType: "image",
                     mediaUrl: imageMessage
                 };
             }
             if (videoMessage) {
-                videoMessage = sendVideoMessage();
+                videoMessage = await sendVideoMessage(videoMessage);
                 newMessage.media = {
                     mediaType: "video",
                     mediaUrl: videoMessage
@@ -47,6 +48,7 @@ export const sendMessage = async (req, res) => {
             }
 
             await newMessage.save();
+            await conversation.save();
             // not an optimized way of doing this as, at first conversation will run in parallel and then newMessage
             // await conversation.save();
             // await newMessage.save();

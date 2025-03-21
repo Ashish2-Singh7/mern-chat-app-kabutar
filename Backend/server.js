@@ -17,7 +17,7 @@ cloudinary.config({
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET,
 });
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT;
 // const __dirname = path.resolve();
 
 app.use(express.json({limit: "5mb"})); // to parse the incoming requests with JSON payloads (from req.body);

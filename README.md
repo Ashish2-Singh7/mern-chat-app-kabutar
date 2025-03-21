@@ -1,5 +1,6 @@
-# **MERN-CHAT-APP (KABUTAR)** 💬
-![Kabutar Logo](./frontend/kabutar/src/assets/logo/logo.png) 
+<div>
+  <h1>MERN-CHAT-APP (KABUTAR) <img src="./frontend/kabutar/src/assets/logo/logo.png" width="50" alt="Kabutar Logo" align="left"></h1>
+</div>
 
 
 A basic real-time chat app built with the MERN stack (MongoDB, Express, React, Node.js) and powered by **Socket.IO**. "Kabutar" is a simple and a basic app to connect with friends, family, or colleagues instantly. This app allows seamless messaging with real-time updates and a smooth user experience. 

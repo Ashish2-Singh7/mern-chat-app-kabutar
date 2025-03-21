@@ -17,8 +17,8 @@ export const SocketContextProvider = ({ children }) => {
     useEffect(() => {
         if (authUser) {
             // on deployment Socket io will not work as the link has got changed now updating the link, repush and redeploy will work.
-            // const socket = io('https://mern-chat-app-kabutar-prod.onrender.com', {
-            const socket = io('http://localhost:8000', {
+            const socket = io('https://mern-chat-app-kabutar-prod.onrender.com', {
+                // const socket = io('http://localhost:8000', {
                 query: {
                     userId: authUser._id
                 }

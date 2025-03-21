@@ -18,20 +18,20 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 const PORT = process.env.PORT;
-// const __dirname = path.resolve();
+const __dirname = path.resolve();
 
-app.use(express.json({limit: "5mb"})); // to parse the incoming requests with JSON payloads (from req.body);
+app.use(express.json({ limit: "5mb" })); // to parse the incoming requests with JSON payloads (from req.body);
 app.use(cookieParser()); // to parse the incoming cookies from req.cookies;
 app.use('/api/auth', authRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/users', userRoutes);
 
-// app.use(express.static(path.join(__dirname, "/frontend/kabutar/dist")));
+app.use(express.static(path.join(__dirname, "/frontend/kabutar/dist")));
 
-// app.get('*', (req, res) => {
-// res.sendFile(path.join(__dirname, "frontend/kabutar", "dist", "index.html"));
-// both our server and frontend are running on the same port, that's exactly what is going to happen in our deployed server
-// })
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, "frontend/kabutar", "dist", "index.html"));
+    // both our server and frontend are running on the same port, that's exactly what is going to happen in our deployed server
+})
 
 server.listen(PORT, () => {
     connectToDB()
